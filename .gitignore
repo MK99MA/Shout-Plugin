@@ -15,6 +15,9 @@
 !/addons/sourcemod/scripting
 /addons/sourcemod/scripting/*
 
+/addons/sourcemod/scripting/include/
+/addons/sourcemod/scripting/include/*
+
 !/addons/sourcemod/scripting/shout.sp
 
 !/addons/sourcemod/scripting/shout
