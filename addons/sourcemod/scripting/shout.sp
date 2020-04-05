@@ -112,6 +112,7 @@ public void OnMapStart()
 	for (int player = 1; player <= MaxClients; player++)
 	{
 		if(GetClientMenu(player) != MenuSource_None )	CancelClientMenu(player,true);
+		SetDefaultClientSettings(player);
 	}
 }
 
@@ -150,7 +151,6 @@ public void OnLibraryAdded(const char []name)
 public void RegisterClientCommands()
 {
 	RegConsoleCmd("sm_shout", ShoutMenu, "Opens the Shout list");
-	RegConsoleCmd("sm_shouthelp", ShoutHelp, "Opens the shouthelp");
 	RegAdminCmd("sm_shoutset", ShoutSettings, ADMFLAG_RCON, "Opens the Shout settings menu");
 }
 
@@ -161,18 +161,12 @@ public Action ShoutMenu(int client, int args)
 	return Plugin_Handled;
 }
 
-public Action ShoutHelp(int client, int args)
-{
-	//OpenPanelHelp(client);
-
-	return Plugin_Handled;
-}
-
 public Action ShoutCommand(int client, int args)
 {
 	char cmd[64];
 	GetCmdArg(0, cmd, sizeof(cmd));
 	int iVolume, iPitch;
+	char sound[PLATFORM_MAX_PATH]
 	
 	strcopy(cmd, sizeof(cmd), cmd[3]);
 	
@@ -180,13 +174,11 @@ public Action ShoutCommand(int client, int args)
 	kvConfig.ImportFromFile(shoutConfigFile);
 	if(kvConfig.JumpToKey(cmd, false))
 	{
-		char sound[PLATFORM_MAX_PATH]
 		kvConfig.GetString("path", sound, sizeof(sound), "shout/godlike.mp3")
 		iVolume = kvConfig.GetNum("volume", shoutVolume);
 		iPitch 	= kvConfig.GetNum("pitch", shoutPitch);
-		
-		PlaySound(client, sound, cmd, iVolume, iPitch);
 	}
+	PlaySound(client, sound, cmd, iVolume, iPitch);
 		
 	kvConfig.Rewind();
 	kvConfig.Close();
@@ -217,7 +209,11 @@ public void SoundSetup(char sound[PLATFORM_MAX_PATH], char soundName[64])
 	{
 		AddFileToDownloadsTable(checksound);
 		PrecacheSound(sound);
-		if(shoutCommand == 1)		RegConsoleCmd(soundCMD, ShoutCommand, "Plays a sound");
+		if(shoutCommand == 1 && !(CommandExists(soundCMD)))		
+		{
+			PrintToServer("%s added", sound);
+			RegConsoleCmd(soundCMD, ShoutCommand, "Plays a sound");
+		}
 	}
 	else PrintToServer("Soundfile not found!");
 }
@@ -256,7 +252,6 @@ public void PlaySound(int client, char sound[PLATFORM_MAX_PATH], char soundName[
 							}
 						}
 					}
-					shoutCDs[client] = CreateTimer(floatCD, shoutCD_Timer, client);
 				}
 				else if(iVolume > 100)
 				{
@@ -282,9 +277,8 @@ public void PlaySound(int client, char sound[PLATFORM_MAX_PATH], char soundName[
 							}
 						}
 					}					
-					
-					shoutCDs[client] = CreateTimer(floatCD, shoutCD_Timer, client);
 				}
+				shoutCDs[client] = CreateTimer(floatCD, shoutCD_Timer, client);
 			}
 			else PrintToChat(client, "[Shout] Shout is on cooldown.");
 		}
@@ -296,14 +290,13 @@ public void PlaySound(int client, char sound[PLATFORM_MAX_PATH], char soundName[
 
 public Action shoutCD_Timer(Handle timer, int client)
 {
-  shoutCDs[client] = INVALID_HANDLE;
+	shoutCDs[client] = INVALID_HANDLE;
+	if(IsClientInGame(client) && (cdStatus[client] & CLIENT_SHOUTCD))
+	{
+		cdStatus[client] &= ~ CLIENT_SHOUTCD;
+	}
 
-  if(IsClientInGame(client) && (cdStatus[client] & CLIENT_SHOUTCD))
-  {
-    cdStatus[client] &= ~ CLIENT_SHOUTCD;
-  }
-
-  return;
+	return;
 }
 
 // *************************************************** SOUNDLISTS ***************************************************
