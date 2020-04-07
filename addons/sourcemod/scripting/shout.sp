@@ -208,14 +208,18 @@ public void SoundSetup(char sound[PLATFORM_MAX_PATH], char soundName[64])
 	if (FileExists(checksound))		
 	{
 		AddFileToDownloadsTable(checksound);
-		PrecacheSound(sound);
+		PrecacheSound(sound)
 		if(shoutCommand == 1 && !(CommandExists(soundCMD)))		
 		{
-			PrintToServer("%s added", sound);
+			PrintToServer("%s added", soundCMD);
 			RegConsoleCmd(soundCMD, ShoutCommand, "Plays a sound");
 		}
 	}
-	else PrintToServer("Soundfile not found!");
+	else 
+	{
+		PrintToServer("Soundfile %s not found!", sound);
+		RemoveShout(soundName);
+	}
 }
 
 
@@ -253,7 +257,7 @@ public void PlaySound(int client, char sound[PLATFORM_MAX_PATH], char soundName[
 						}
 					}
 				}
-				else if(iVolume > 100)
+				else if(iVolume > 100 && iVolume <= 200)
 				{
 					int bVolume = iVolume/2;
 					float floatVolume = float(bVolume)/100;
@@ -271,6 +275,33 @@ public void PlaySound(int client, char sound[PLATFORM_MAX_PATH], char soundName[
 							if (GetClientTeam(i) == GetClientTeam(client))	
 							{
 								x++;
+								EmitSoundToClient(i, sound, _, _, _, _, floatVolume, iPitch, _, pos, _, true, _)
+								EmitSoundToClient(i, sound, _, _, _, _, floatVolume, iPitch, _, pos, _, true, _)
+								if(x == GetTeamClientCount(GetClientTeam(client))) break;
+							}
+						}
+					}					
+				}
+				else if(iVolume > 200)
+				{
+					int bVolume = iVolume/3;
+					float floatVolume = float(bVolume)/100;
+					
+					if(shoutMode == 0)	
+					{
+						EmitAmbientSound(sound, pos, _, _, _, floatVolume, iPitch);	
+						EmitAmbientSound(sound, pos, _, _, _, floatVolume, iPitch);	
+						EmitAmbientSound(sound, pos, _, _, _, floatVolume, iPitch);	
+					}
+					else if (shoutMode == 1)
+					{
+						int x = 0;
+						for(int i = 1; i <= MaxClients; i++)
+						{
+							if (GetClientTeam(i) == GetClientTeam(client))	
+							{
+								x++;
+								EmitSoundToClient(i, sound, _, _, _, _, floatVolume, iPitch, _, pos, _, true, _)
 								EmitSoundToClient(i, sound, _, _, _, _, floatVolume, iPitch, _, pos, _, true, _)
 								EmitSoundToClient(i, sound, _, _, _, _, floatVolume, iPitch, _, pos, _, true, _)
 								if(x == GetTeamClientCount(GetClientTeam(client))) break;
@@ -395,6 +426,20 @@ public Action shoutAD_Timer(Handle timer, int client)
   }
 
   return;
+}
+
+public void RemoveShout(char soundName[64])
+{
+	kvConfig = new KeyValues("Shout List");
+	kvConfig.ImportFromFile(shoutConfigFile);
+	
+	kvConfig.JumpToKey(soundName, false);
+	kvConfig.DeleteThis();
+	kvConfig.GoBack();
+
+	kvConfig.Rewind();
+	kvConfig.ExportToFile(shoutConfigFile);
+	kvConfig.Close();
 }
 
 public int GetVolOrPit(char shoutname[64], char StrToGet[32])

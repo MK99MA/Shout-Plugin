@@ -213,11 +213,12 @@ public void OpenMenuShoutVol(int client)
 	Format(title, sizeof(title), "Shout Volume: [%i%]", shoutVolume);
 	menu.SetTitle(title);
 	
+	menu.AddItem("volup", "Volume up (+10)");
+	menu.AddItem("voldown", "Volume down (-10)");
+	menu.AddItem("300", "300% (Louder)");
 	menu.AddItem("200", "200% (Loud)");
 	menu.AddItem("100", "100% (Default)");
 	menu.AddItem("0", "0% (Off)");
-	menu.AddItem("volup", "Volume up (+10)");
-	menu.AddItem("voldown", "Volume down (-10)");
 	
 	menu.ExitBackButton = true;
 	menu.Display(client, MENU_TIME_FOREVER);
@@ -233,13 +234,14 @@ public int MenuHandlerShoutVol(Menu menu, MenuAction action, int client, int cho
 		if(StrEqual(menuItem, "0")) shoutVolume = 0;
 		else if (StrEqual(menuItem, "100")) shoutVolume = 100;
 		else if (StrEqual(menuItem, "200")) shoutVolume = 200;
+		else if (StrEqual(menuItem, "300")) shoutVolume = 300;
 		else if (StrEqual(menuItem, "volup")) shoutVolume = shoutVolume+10;
 		else if (StrEqual(menuItem, "voldown"))	shoutVolume = shoutVolume-10;
 		
-		if(shoutVolume > 200) 
+		if(shoutVolume > 300) 
 		{
-			shoutVolume = 200;
-			PrintToChat(client, "[Shout] Volume can't be higher than 200!");
+			shoutVolume = 300;
+			PrintToChat(client, "[Shout] Volume can't be higher than 300!");
 		}
 		else if(shoutVolume < 0) 
 		{
@@ -699,11 +701,12 @@ public void OpenMenuShoutVolOrPit(int client, char StrToGet[32])
 		Format(title, sizeof(title), "Shout Volume: [%i%]", GetVolOrPit(gNamebuffer, "volume"));
 		menu.SetTitle(title);
 		
+		menu.AddItem("volup", "Volume up (+10)");
+		menu.AddItem("voldown", "Volume down (-10)");
+		menu.AddItem("300", "300% (Louder)");
 		menu.AddItem("200", "200% (Loud)");
 		menu.AddItem("100", "100% (Default)");
 		menu.AddItem("0", "0% (Off)");
-		menu.AddItem("volup", "Volume up (+10)");
-		menu.AddItem("voldown", "Volume down (-10)");
 	}
 	else if(StrEqual(StrToGet, "pitch"))
 	{
@@ -738,13 +741,14 @@ public int MenuHandlerShoutVolPitSet(Menu menu, MenuAction action, int client, i
 			if(StrEqual(menuItem, "0")) iVolume = 0;
 			else if (StrEqual(menuItem, "100")) iVolume = 100;
 			else if (StrEqual(menuItem, "200")) iVolume = 200;
+			else if (StrEqual(menuItem, "300")) iVolume = 300;
 			else if (StrEqual(menuItem, "volup")) iVolume = iVolume+10;
 			else if (StrEqual(menuItem, "voldown"))iVolume = iVolume-10;
 			
-			if(iVolume > 200) 
+			if(iVolume > 300) 
 			{
-				iVolume = 200;
-				PrintToChat(client, "[Shout] Volume can't be higher than 200!");
+				iVolume = 300;
+				PrintToChat(client, "[Shout] Volume can't be higher than 300!");
 			}
 			else if(iVolume < 0) 
 			{
