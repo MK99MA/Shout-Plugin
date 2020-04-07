@@ -215,8 +215,9 @@ public void OpenMenuShoutVol(int client)
 	
 	menu.AddItem("volup", "Volume up (+10)");
 	menu.AddItem("voldown", "Volume down (-10)");
-	menu.AddItem("300", "300% (Louder)");
-	menu.AddItem("200", "200% (Loud)");
+	menu.AddItem("volup2", "Volume up (+50)");
+	menu.AddItem("voldown2", "Volume down (-50)");
+	menu.AddItem("500", "500% (Max)");
 	menu.AddItem("100", "100% (Default)");
 	menu.AddItem("0", "0% (Off)");
 	
@@ -233,15 +234,16 @@ public int MenuHandlerShoutVol(Menu menu, MenuAction action, int client, int cho
 		
 		if(StrEqual(menuItem, "0")) shoutVolume = 0;
 		else if (StrEqual(menuItem, "100")) shoutVolume = 100;
-		else if (StrEqual(menuItem, "200")) shoutVolume = 200;
-		else if (StrEqual(menuItem, "300")) shoutVolume = 300;
+		else if (StrEqual(menuItem, "500")) shoutVolume = 500;
+		else if (StrEqual(menuItem, "volup2")) shoutVolume = shoutVolume+50;
+		else if (StrEqual(menuItem, "voldown2"))	shoutVolume = shoutVolume-50;
 		else if (StrEqual(menuItem, "volup")) shoutVolume = shoutVolume+10;
 		else if (StrEqual(menuItem, "voldown"))	shoutVolume = shoutVolume-10;
 		
-		if(shoutVolume > 300) 
+		if(shoutVolume > 500) 
 		{
-			shoutVolume = 300;
-			PrintToChat(client, "[Shout] Volume can't be higher than 300!");
+			shoutVolume = 500;
+			PrintToChat(client, "[Shout] Volume can't be higher than 500!");
 		}
 		else if(shoutVolume < 0) 
 		{
@@ -305,14 +307,17 @@ public int MenuHandlerShoutPitch(Menu menu, MenuAction action, int client, int c
 		}
 
 		UpdateSettingsInt("pitch", shoutPitch);
-		PrintToChat(client, "[Shout] Pitch set to %i", shoutPitch);
 		
 		char title[32];
 		Format(title, sizeof(title), "Shout Pitch: [%i]", shoutPitch);
 		menu.SetTitle(title);
 		DisplayMenuAtItem(menu, client, GetMenuSelectionPosition(), MENU_TIME_FOREVER);
 	}
-	else if (action == MenuAction_Cancel && choice == -6)   OpenMenuShoutSet(client);
+	else if (action == MenuAction_Cancel && choice == -6)   
+	{
+		OpenMenuShoutSet(client);	
+		PrintToChat(client, "[Shout] Pitch set to %i", shoutPitch);
+	}
 }
 
 // ******************************************************************************************************************
@@ -703,8 +708,9 @@ public void OpenMenuShoutVolOrPit(int client, char StrToGet[32])
 		
 		menu.AddItem("volup", "Volume up (+10)");
 		menu.AddItem("voldown", "Volume down (-10)");
-		menu.AddItem("300", "300% (Louder)");
-		menu.AddItem("200", "200% (Loud)");
+		menu.AddItem("volup2", "Volume up (+50)");
+		menu.AddItem("voldown2", "Volume down (-50)");
+		menu.AddItem("500", "500% (Max)");
 		menu.AddItem("100", "100% (Default)");
 		menu.AddItem("0", "0% (Off)");
 	}
@@ -740,15 +746,16 @@ public int MenuHandlerShoutVolPitSet(Menu menu, MenuAction action, int client, i
 			
 			if(StrEqual(menuItem, "0")) iVolume = 0;
 			else if (StrEqual(menuItem, "100")) iVolume = 100;
-			else if (StrEqual(menuItem, "200")) iVolume = 200;
-			else if (StrEqual(menuItem, "300")) iVolume = 300;
+			else if (StrEqual(menuItem, "500")) iVolume = 500;
+			else if (StrEqual(menuItem, "volup2")) iVolume = iVolume+50;
+			else if (StrEqual(menuItem, "voldown2"))iVolume = iVolume-50;
 			else if (StrEqual(menuItem, "volup")) iVolume = iVolume+10;
 			else if (StrEqual(menuItem, "voldown"))iVolume = iVolume-10;
 			
-			if(iVolume > 300) 
+			if(iVolume > 500) 
 			{
-				iVolume = 300;
-				PrintToChat(client, "[Shout] Volume can't be higher than 300!");
+				iVolume = 500;
+				PrintToChat(client, "[Shout] Volume can't be higher than 500!");
 			}
 			else if(iVolume < 0) 
 			{

@@ -238,76 +238,25 @@ public void PlaySound(int client, char sound[PLATFORM_MAX_PATH], char soundName[
 				float pos[3];
 				GetClientAbsOrigin(client, pos);
 				
-				if(iVolume != 0 && iVolume <= 100)	
-				{	
-					float floatVolume = float(iVolume)/100;
-					
-					if(shoutMode == 0)	EmitAmbientSound(sound, pos, _, _, _, floatVolume, iPitch);	
-					else if (shoutMode == 1) 
-					{
-						int x = 0;
-						for(int i = 1; i <= MaxClients; i++)
-						{
-							if (GetClientTeam(i) == GetClientTeam(client))	
-							{
-								x++;
-								EmitSoundToClient(i, sound, _, _, _, _, floatVolume, iPitch, _, pos, _, true, _);
-								if(x == GetTeamClientCount(GetClientTeam(client))) break;
-							}
-						}
-					}
-				}
-				else if(iVolume > 100 && iVolume <= 200)
+				int modVolume = RoundToCeil(float(iVolume)/100);
+				float floatVolume = float(iVolume)/(modVolume*100);
+
+				if(shoutMode == 0)	
 				{
-					int bVolume = iVolume/2;
-					float floatVolume = float(bVolume)/100;
-					
-					if(shoutMode == 0)	
-					{
-						EmitAmbientSound(sound, pos, _, _, _, floatVolume, iPitch);	
-						EmitAmbientSound(sound, pos, _, _, _, floatVolume, iPitch);	
-					}
-					else if (shoutMode == 1)
-					{
-						int x = 0;
-						for(int i = 1; i <= MaxClients; i++)
-						{
-							if (GetClientTeam(i) == GetClientTeam(client))	
-							{
-								x++;
-								EmitSoundToClient(i, sound, _, _, _, _, floatVolume, iPitch, _, pos, _, true, _)
-								EmitSoundToClient(i, sound, _, _, _, _, floatVolume, iPitch, _, pos, _, true, _)
-								if(x == GetTeamClientCount(GetClientTeam(client))) break;
-							}
-						}
-					}					
+					for(int i = 1; i <= modVolume; i++)						EmitAmbientSound(sound, pos, _, _, _, floatVolume, iPitch);	
 				}
-				else if(iVolume > 200)
+				else if (shoutMode == 1) 
 				{
-					int bVolume = iVolume/3;
-					float floatVolume = float(bVolume)/100;
-					
-					if(shoutMode == 0)	
+					int x = 0;
+					for(int i = 1; i <= MaxClients; i++)
 					{
-						EmitAmbientSound(sound, pos, _, _, _, floatVolume, iPitch);	
-						EmitAmbientSound(sound, pos, _, _, _, floatVolume, iPitch);	
-						EmitAmbientSound(sound, pos, _, _, _, floatVolume, iPitch);	
-					}
-					else if (shoutMode == 1)
-					{
-						int x = 0;
-						for(int i = 1; i <= MaxClients; i++)
+						if (GetClientTeam(i) == GetClientTeam(client))	
 						{
-							if (GetClientTeam(i) == GetClientTeam(client))	
-							{
-								x++;
-								EmitSoundToClient(i, sound, _, _, _, _, floatVolume, iPitch, _, pos, _, true, _)
-								EmitSoundToClient(i, sound, _, _, _, _, floatVolume, iPitch, _, pos, _, true, _)
-								EmitSoundToClient(i, sound, _, _, _, _, floatVolume, iPitch, _, pos, _, true, _)
-								if(x == GetTeamClientCount(GetClientTeam(client))) break;
-							}
+							x++;
+							for(int i2 = 1; i2 <= modVolume; i2++)			EmitSoundToClient(i, sound, _, _, _, _, floatVolume, iPitch, _, pos, _, true, _);
+							if(x == GetTeamClientCount(GetClientTeam(client))) break;
 						}
-					}					
+					}
 				}
 				shoutCDs[client] = CreateTimer(floatCD, shoutCD_Timer, client);
 			}
