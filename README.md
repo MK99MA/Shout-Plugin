@@ -30,6 +30,6 @@ Adding this to your server will allow you to automatically update the plugin whe
 [Updater](https://bitbucket.org/GoD_Tony/updater/downloads/updater.smx)  
   
  ● Shout Plugin  
-[>>DOWNLOAD with sounds<<](https://github.com/MK99MA/Shout-Plugin/releases/download/1.0/shoutplugin.7z)  
+[>>DOWNLOAD with sounds<<](https://github.com/MK99MA/Shout-Plugin/releases/tag/1.0)  
 
 [>>DOWNLOAD without sounds<<](https://github.com/MK99MA/Shout-Plugin/blob/master/addons/sourcemod/plugins/shout.smx)  
