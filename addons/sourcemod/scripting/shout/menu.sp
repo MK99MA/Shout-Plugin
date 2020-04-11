@@ -131,6 +131,11 @@ public int MenuHandlerShoutSet(Menu menu, MenuAction action, int client, int cho
 			if(shoutMode == 0)
 			{
 				shoutMode = 1;
+				if(shoutCD == 1)
+				{
+					shoutCD = 0;
+					UpdateSettingsInt("cooldown", shoutCD);
+				}
 				UpdateSettingsInt("mode", shoutMode);
 				PrintToChat(client, "[Shout] Team mode activated!");
 				OpenMenuShoutSet(client);
@@ -138,6 +143,11 @@ public int MenuHandlerShoutSet(Menu menu, MenuAction action, int client, int cho
 			else if(shoutMode == 1)
 			{
 				shoutMode = 0;
+				if(shoutCD == 0)
+				{
+					shoutCD = 1;
+					UpdateSettingsInt("cooldown", shoutCD);
+				}
 				UpdateSettingsInt("mode", shoutMode);
 				PrintToChat(client, "[Shout] Ambient mode activated!");
 				OpenMenuShoutSet(client);

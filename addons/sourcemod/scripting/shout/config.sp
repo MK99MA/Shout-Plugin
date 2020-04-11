@@ -87,7 +87,7 @@ public void ReadSettings()
 	kvSettings = new KeyValues("Shout Settings");
 	kvSettings.ImportFromFile(shoutSetFile);
 	
-	shoutCD			= kvSettings.GetNum("cooldown", 5);
+	shoutCD			= kvSettings.GetNum("cooldown", 1);
 	shoutVolume		= kvSettings.GetNum("volume", 100);
 	shoutPitch 		= kvSettings.GetNum("pitch", 100);
 	shoutCommand	= kvSettings.GetNum("commands", 0);

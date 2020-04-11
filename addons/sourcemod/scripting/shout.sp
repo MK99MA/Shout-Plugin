@@ -26,7 +26,7 @@ KeyValues kvConfig;
 KeyValues kvSettings;
 
 //INT
-int shoutCD 		= 5;
+int shoutCD 		= 1;
 int shoutCommand	= 0;
 int shoutMode		= 0;
 int shoutPitch 		= 100;
@@ -243,18 +243,18 @@ public void PlaySound(int client, char sound[PLATFORM_MAX_PATH], char soundName[
 
 				if(shoutMode == 0)	
 				{
-					for(int i = 1; i <= modVolume; i++)						EmitAmbientSound(sound, pos, _, _, _, floatVolume, iPitch);	
+					for(int i = 1; i <= modVolume; i++)						EmitAmbientSound(sound, pos, SOUND_FROM_PLAYER, _, _, floatVolume, iPitch);	
 				}
 				else if (shoutMode == 1) 
-				{
-					int x = 0;
+				{					
 					for(int i = 1; i <= MaxClients; i++)
 					{
-						if (GetClientTeam(i) == GetClientTeam(client))	
+						if(IsClientInGame(i) && IsClientConnected(i))// && !IsFakeClient(i)) 
 						{
-							x++;
-							for(int i2 = 1; i2 <= modVolume; i2++)			EmitSoundToClient(i, sound, _, _, _, _, floatVolume, iPitch, _, pos, _, true, _);
-							if(x == GetTeamClientCount(GetClientTeam(client))) break;
+							if(GetClientTeam(i) == GetClientTeam(client))	
+							{
+								for(int k = 1; k <= modVolume; k++)			EmitSoundToClient(i, sound, _, _, _, _, floatVolume, iPitch, _, pos, _, true, _);
+							}
 						}
 					}
 				}
@@ -366,15 +366,15 @@ public bool NameTaken(char compare[64])
 
 public Action shoutAD_Timer(Handle timer, int client)
 {
-  shoutAdvert[client] = INVALID_HANDLE;
+	shoutAdvert[client] = INVALID_HANDLE;
 
-  if(IsClientInGame(client) && GetClientTeam(client) > 1)
-  {
-    if(CheckCommandAccess(client, "generic_admin", ADMFLAG_RCON, true)) PrintToChat(client, "[Shout] Use !shout to shout or !shoutset to manage them.");
-	else PrintToChat(client, "[Shout] Use !shout to bring up the shout menu.");
-  }
+	if(IsClientInGame(client) && GetClientTeam(client) > 1)
+	{
+		if(CheckCommandAccess(client, "generic_admin", ADMFLAG_RCON, true)) PrintToChat(client, "[Shout] Use !shout to shout or !shoutset to manage them.");
+		else PrintToChat(client, "[Shout] Use !shout to bring up the shout menu.");
+	}
 
-  return;
+	return;
 }
 
 public void RemoveShout(char soundName[64])
