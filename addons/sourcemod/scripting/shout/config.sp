@@ -75,6 +75,8 @@ public void CreateSettings()
 	kvSettings.SetNum("commands", 					shoutCommand);
 	kvSettings.SetNum("mode",						shoutMode);
 	kvSettings.SetNum("message",					shoutMessage);
+	kvSettings.SetNum("radius",						shoutRadius);
+	kvSettings.SetNum("debug",						shoutDebug);
 	kvSettings.GoBack();
 
 	kvSettings.Rewind();
@@ -93,6 +95,8 @@ public void ReadSettings()
 	shoutCommand	= kvSettings.GetNum("commands", 0);
 	shoutMode		= kvSettings.GetNum("mode", 0);
 	shoutMessage	= kvSettings.GetNum("message", 2);
+	shoutRadius		= kvSettings.GetNum("radius", 400);
+	shoutDebug		= kvSettings.GetNum("debug", 0);
 	kvSettings.GoBack();
 
 	kvSettings.Rewind();

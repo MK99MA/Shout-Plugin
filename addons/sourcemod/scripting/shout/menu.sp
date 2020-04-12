@@ -34,7 +34,7 @@ public void OpenMenuShout(int client)
 	kvConfig.Rewind();
 	kvConfig.Close();	
 
-	if(CheckCommandAccess(client, "generic_admin", ADMFLAG_RCON, true)) menu.AddItem("info", "Settings: !shoutset", ITEMDRAW_DISABLED);
+	if(CheckCommandAccess(client, "generic_admin", ADMFLAG_GENERIC, true)) menu.AddItem("info", "Settings: !shoutset", ITEMDRAW_DISABLED);
 	
 	menu.ExitBackButton = true;
 	menu.Display(client, MENU_TIME_FOREVER);
@@ -77,7 +77,7 @@ public void OpenMenuShoutSet(int client)
 	Menu menu = new Menu(MenuHandlerShoutSet);
 	menu.SetTitle("Shout Settings");
 	
-	char cdstring[64], volstring[64], pitchstring[64], commandstring[64], modestring[64];
+	char cdstring[64], volstring[64], pitchstring[64], commandstring[64], modestring[64], radiusstring[64];
 	
 	Format(cdstring, sizeof(cdstring), "Cooldown: %i", shoutCD);
 	Format(volstring, sizeof(volstring), "Volume: %i", shoutVolume);
@@ -86,13 +86,19 @@ public void OpenMenuShoutSet(int client)
 	else if (shoutCommand == 1) commandstring = "Commands: ON";
 	if(shoutMode == 0)modestring = "Mode: Ambient";
 	else if (shoutMode == 1) modestring = "Mode: Team";
+	else if (shoutMode == 2) modestring = "Mode: Radius";
+	else if (shoutMode == 3) modestring = "Mode: Radius(Team)";
+	Format(radiusstring, sizeof(radiusstring), "Radius: %i", shoutRadius);
 	
+	
+	menu.AddItem("mode", modestring);
 	menu.AddItem("cd", cdstring);
 	menu.AddItem("vol", volstring);
 	menu.AddItem("pitch", pitchstring);
-	menu.AddItem("cmd", commandstring);
-	menu.AddItem("mode", modestring);
-	menu.AddItem("manage", "Shout Manager");
+	if(shoutMode == 2 || shoutMode == 3) menu.AddItem("radius", radiusstring);
+	if(CheckCommandAccess(client, "generic_admin", ADMFLAG_RCON, true)) menu.AddItem("cmd", commandstring);
+	if(CheckCommandAccess(client, "generic_admin", ADMFLAG_RCON, true))	menu.AddItem("manage", "Shout Manager");
+	
 	menu.AddItem("help", "Help / Credits");
 	
 	menu.ExitBackButton = true;
@@ -109,6 +115,7 @@ public int MenuHandlerShoutSet(Menu menu, MenuAction action, int client, int cho
 		if (StrEqual(menuItem, "cd"))				OpenMenuShoutCD(client);
 		else if (StrEqual(menuItem, "vol"))			OpenMenuShoutVol(client);
 		else if (StrEqual(menuItem, "pitch"))		OpenMenuShoutPitch(client);
+		else if (StrEqual(menuItem, "radius"))		OpenMenuShoutRadius(client);
 		else if (StrEqual(menuItem, "cmd"))	
 		{	
 			if(shoutCommand == 0)
@@ -137,19 +144,39 @@ public int MenuHandlerShoutSet(Menu menu, MenuAction action, int client, int cho
 					UpdateSettingsInt("cooldown", shoutCD);
 				}
 				UpdateSettingsInt("mode", shoutMode);
-				PrintToChat(client, "[Shout] Team mode activated!");
 				OpenMenuShoutSet(client);
 			}
 			else if(shoutMode == 1)
 			{
-				shoutMode = 0;
+				shoutMode = 2;
 				if(shoutCD == 0)
 				{
 					shoutCD = 1;
 					UpdateSettingsInt("cooldown", shoutCD);
 				}
 				UpdateSettingsInt("mode", shoutMode);
-				PrintToChat(client, "[Shout] Ambient mode activated!");
+				OpenMenuShoutSet(client);
+			}
+			else if(shoutMode == 2)
+			{
+				shoutMode = 3;
+				if(shoutCD == 1)
+				{
+					shoutCD = 0;
+					UpdateSettingsInt("cooldown", shoutCD);
+				}
+				UpdateSettingsInt("mode", shoutMode);
+				OpenMenuShoutSet(client);
+			}
+			else if(shoutMode == 3)
+			{
+				shoutMode = 0;
+				if(shoutCD == 1)
+				{
+					shoutCD = 0;
+					UpdateSettingsInt("cooldown", shoutCD);
+				}
+				UpdateSettingsInt("mode", shoutMode);
 				OpenMenuShoutSet(client);
 			}
 		}
@@ -157,6 +184,60 @@ public int MenuHandlerShoutSet(Menu menu, MenuAction action, int client, int cho
 		else if (StrEqual(menuItem, "help"))		OpenMenuShoutHelp(client);
 	}
 	else if (action == MenuAction_Cancel && choice == -6)   CancelClientMenu(client,true);
+}
+
+// ******************************************************************************************************************
+// **************************************************** RADIUS ******************************************************
+// ******************************************************************************************************************
+
+public void OpenMenuShoutRadius(int client)
+{
+	Menu menu = new Menu(MenuHandlerShoutRadius);
+	char title[32];
+	Format(title, sizeof(title), "Shout Radius: [%i]", shoutRadius);
+	menu.SetTitle(title);
+	
+	menu.AddItem("400", "400 (Default)");
+	menu.AddItem("+10", "+10");
+	menu.AddItem("+5", "+5");
+	menu.AddItem("-10", "-10");
+	menu.AddItem("-5", "-5");
+	
+	menu.ExitBackButton = true;
+	menu.Display(client, MENU_TIME_FOREVER);
+}
+
+public int MenuHandlerShoutRadius(Menu menu, MenuAction action, int client, int choice)
+{
+	if (action == MenuAction_Select)
+	{
+		char menuItem[64];
+		menu.GetItem(choice, menuItem, sizeof(menuItem));
+		
+		if(StrEqual(menuItem, "400")) shoutRadius = 400;
+		else if (StrEqual(menuItem, "+10")) shoutRadius = shoutRadius + 10;
+		else if (StrEqual(menuItem, "-10")) shoutRadius = shoutRadius - 10;
+		else if (StrEqual(menuItem, "+5")) shoutRadius = shoutRadius + 5;
+		else if (StrEqual(menuItem, "-5")) shoutRadius = shoutRadius - 5;
+
+		if(shoutRadius < 0) 
+		{
+			shoutRadius = 0;
+			PrintToChat(client, "[Shout] Radius can't be lower than 0!");
+		}
+
+		UpdateSettingsInt("radius", shoutRadius);
+		
+		char title[32];
+		Format(title, sizeof(title), "Shout Radius: [%i]", shoutRadius);
+		menu.SetTitle(title);
+		DisplayMenuAtItem(menu, client, GetMenuSelectionPosition(), MENU_TIME_FOREVER);
+	}
+	else if (action == MenuAction_Cancel && choice == -6)   
+	{
+		OpenMenuShoutSet(client);	
+		PrintToChat(client, "[Shout] Radius set to %i", shoutRadius);
+	}
 }
 
 // ******************************************************************************************************************
@@ -922,14 +1003,17 @@ public void OpenMenuShoutHelp(int client)
 	Menu menu = new Menu(MenuHandlerShoutHelp);
 	menu.SetTitle("Help & Credits");
 	
-	char formatstring[64];
+	char formatstring[64], debugstring[64];
 	if(shoutMessage == 1) Format(formatstring, sizeof(formatstring), "Join Advert: On");
 	else if(shoutMessage == 0)Format(formatstring, sizeof(formatstring), "Join Advert: Off");
+	if(shoutDebug == 1) Format(debugstring, sizeof(debugstring), "Debug: On");
+	else if (shoutDebug == 0) Format(debugstring, sizeof(debugstring), "Debug: Off");
 	
 	menu.AddItem("settings", "About: Settings");
 	menu.AddItem("adding", "About: Managing shouts");
 	menu.AddItem("credits", "Credits");
 	menu.AddItem("joinmsg", formatstring);
+	if(CheckCommandAccess(client, "generic_admin", ADMFLAG_RCON, true)) menu.AddItem("debug", debugstring);
 	
 	menu.ExitBackButton = true;
 	menu.Display(client, MENU_TIME_FOREVER);
@@ -960,6 +1044,21 @@ public int MenuHandlerShoutHelp(Menu menu, MenuAction action, int client, int ch
 				OpenMenuShoutHelp(client);
 			}
 		}
+		else if(StrEqual(menuItem, "debug"))
+		{
+			if(shoutDebug == 1)
+			{
+				shoutDebug = 0;
+				UpdateSettingsInt("debug", shoutDebug);
+				OpenMenuShoutHelp(client);
+			}
+			else
+			{
+				shoutDebug = 1;
+				UpdateSettingsInt("debug", shoutDebug);
+				OpenMenuShoutHelp(client);
+			}
+		}
 	}
 	else if (action == MenuAction_Cancel && choice == -6)   OpenMenuShoutSet(client);
 }
@@ -980,11 +1079,15 @@ public void OpenPanelShoutSettings(int client)
 	panel.DrawText("Pitch:");
 	panel.DrawText("Adjust the Pitch");
 	panel.DrawText(" ");
+	panel.DrawText("Radius:");
+	panel.DrawText("Change the distance sounds can be heard");
+	panel.DrawText("in the 2 radius modes.");
+	panel.DrawText(" ");
 	panel.DrawText("Commands:");
 	panel.DrawText("Create an own command per shout?");
 	panel.DrawText(" ");
 	panel.DrawText("Mode:");
-	panel.DrawText("Switch between Ambient and Team mode");
+	panel.DrawText("Switch between the 4 different modes");
 	panel.DrawText(" ");
 	panel.DrawText("Manager:");
 	panel.DrawText("Add, Edit and Remove shouts");

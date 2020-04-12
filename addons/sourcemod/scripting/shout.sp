@@ -1,7 +1,7 @@
 // **************************************************************************************************************
 // ************************************************** DEFINES ***************************************************
 // **************************************************************************************************************
-#define PLUGIN_VERSION "1.0"
+#define PLUGIN_VERSION "1.1"
 #define UPDATE_URL "https://drv.tw/~raroger1975@gmail.com/gd/Sourcemod/shoutplugin/updatefile.txt"
 #define CLIENT_SHOUTCD  (1<<1)
 
@@ -32,9 +32,8 @@ int shoutMode		= 0;
 int shoutPitch 		= 100;
 int shoutVolume		= 100;
 int shoutMessage	= 2;
-
-//FLOAT
-
+int shoutRadius		= 400; //25 feet
+int shoutDebug		= 0;
 
 //HANDLE
 Handle fileArray;
@@ -151,7 +150,7 @@ public void OnLibraryAdded(const char []name)
 public void RegisterClientCommands()
 {
 	RegConsoleCmd("sm_shout", ShoutMenu, "Opens the Shout list");
-	RegAdminCmd("sm_shoutset", ShoutSettings, ADMFLAG_RCON, "Opens the Shout settings menu");
+	RegAdminCmd("sm_shoutset", ShoutSettings, ADMFLAG_GENERIC, "Opens the Shout settings menu");
 }
 
 public Action ShoutMenu(int client, int args)
@@ -226,6 +225,7 @@ public void SoundSetup(char sound[PLATFORM_MAX_PATH], char soundName[64])
 public void PlaySound(int client, char sound[PLATFORM_MAX_PATH], char soundName[64], int iVolume, int iPitch)
 {
 	float floatCD = float(shoutCD);
+	float floatRadius = float(shoutRadius);
 	if(shoutVolume != 0)
 	{
 		if (IsClientInGame(client) && IsPlayerAlive(client) && GetClientTeam(client) > 1)
@@ -249,9 +249,49 @@ public void PlaySound(int client, char sound[PLATFORM_MAX_PATH], char soundName[
 				{					
 					for(int i = 1; i <= MaxClients; i++)
 					{
-						if(IsClientInGame(i) && IsClientConnected(i))// && !IsFakeClient(i)) 
+						if(IsClientInGame(i) && IsClientConnected(i) && !IsFakeClient(i)) 
 						{
 							if(GetClientTeam(i) == GetClientTeam(client))	
+							{
+								for(int k = 1; k <= modVolume; k++)			EmitSoundToClient(i, sound, _, _, _, _, floatVolume, iPitch, _, pos, _, true, _);
+							}
+						}
+					}
+				}
+				else if (shoutMode == 2)
+				{
+					for(int i = 1; i <= MaxClients; i++)
+					{
+						if(IsClientInGame(i) && IsClientConnected(i) && !IsFakeClient(i)) 
+						{
+							float pos2[3];
+							GetClientAbsOrigin(i, pos2);
+							char namebuffer[MAX_NAME_LENGTH];
+							GetClientName(i, namebuffer, sizeof(namebuffer));
+
+							if(shoutDebug == 1)	if(GetVectorDistance(pos, pos2, false) > 0.0)PrintToChatAll("Player %s is %.0f away. Current radius: %.0f", namebuffer, GetVectorDistance(pos, pos2, false), floatRadius);
+							
+							if(GetVectorDistance(pos, pos2, false) <= floatRadius)
+							{
+								for(int k = 1; k <= modVolume; k++)			EmitSoundToClient(i, sound, _, _, _, _, floatVolume, iPitch, _, pos, _, true, _);
+							}
+						}
+					}
+				}
+				else if (shoutMode == 3)
+				{
+					for(int i = 1; i <= MaxClients; i++)
+					{
+						if(IsClientInGame(i) && IsClientConnected(i) && !IsFakeClient(i)) 
+						{
+							float pos2[3];
+							GetClientAbsOrigin(i, pos2);
+							char namebuffer[MAX_NAME_LENGTH];
+							GetClientName(i, namebuffer, sizeof(namebuffer));
+							
+							if(shoutDebug == 1)	if(GetVectorDistance(pos, pos2, false) > 0.0)PrintToChatAll("Player %s is %.0f away. Current radius: %.0f", namebuffer, GetVectorDistance(pos, pos2, false), floatRadius);
+							
+							if((GetVectorDistance(pos, pos2, false) <= floatRadius) && (GetClientTeam(i) == GetClientTeam(client)))
 							{
 								for(int k = 1; k <= modVolume; k++)			EmitSoundToClient(i, sound, _, _, _, _, floatVolume, iPitch, _, pos, _, true, _);
 							}
