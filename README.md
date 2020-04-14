@@ -20,7 +20,7 @@ so, again, expect some heavily improvable code.
 
 ## Installation
 ### 1. Download the required plugins
-To run Soccer Mod on your server you need the following plugins:  
+To run the plugin on your server you need the following plugins:  
  ● Metamod:Source 1.10 or higher  
 http://www.sourcemm.net/downloads.php?branch=stable  
   
