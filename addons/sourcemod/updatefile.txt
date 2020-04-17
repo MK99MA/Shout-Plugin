@@ -13,10 +13,10 @@
 	
 	"Files"
 	{
-			"Patch"
-			{
-				"Plugin"	"Path_SM/plugins/shout.smx"
-			}
+		"Patch"
+		{
+			"Plugin"	"Path_SM/plugins/shout.smx"
+		}
 		"Plugin"	"Path_SM/plugins/shout.smx"
 		"Plugin"	"Path_Mod/sound/shout/godlike.mp3"
 		"Plugin"	"Path_Mod/sound/shout/holyshit.mp3"
