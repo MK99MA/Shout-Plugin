@@ -1,4 +1,4 @@
-# Shout Plugin  (Current Version: 1.1)  
+# Shout Plugin  (Current Version: 1.2)  
 A recreation of an eventscripts soccermod feature with some additional options.  
 This was a request and due to certain reasons I was bored enough to do it. However I'm still far from being an expert in SourcePawn  
 so, again, expect some heavily improvable code.   
