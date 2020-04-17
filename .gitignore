@@ -11,6 +11,7 @@
 /addons/sourcemod/plugins/*
 
 !/addons/sourcemod/plugins/shout.smx
+!/addons/sourcemod/plugins/old/*
 
 !/addons/sourcemod/scripting
 /addons/sourcemod/scripting/*

@@ -65,6 +65,7 @@ public int MenuHandlerShoutList(Menu menu, MenuAction action, int client, int ch
 		
 		DisplayMenuAtItem(menu, client, GetMenuSelectionPosition(), MENU_TIME_FOREVER);
 	}
+	
 	else if (action == MenuAction_Cancel && choice == -6)   CancelClientMenu(client,true);
 }
 
@@ -107,6 +108,8 @@ public void OpenMenuShoutSet(int client)
 
 public int MenuHandlerShoutSet(Menu menu, MenuAction action, int client, int choice)
 {
+	Handle soccermod = FindPluginByFile("soccer_mod.smx");
+	
 	if (action == MenuAction_Select)
 	{
 		char menuItem[64];
@@ -138,9 +141,9 @@ public int MenuHandlerShoutSet(Menu menu, MenuAction action, int client, int cho
 			if(shoutMode == 0)
 			{
 				shoutMode = 1;
-				if(shoutCD == 1)
+				if(shoutCD == 0)
 				{
-					shoutCD = 0;
+					shoutCD = 1;
 					UpdateSettingsInt("cooldown", shoutCD);
 				}
 				UpdateSettingsInt("mode", shoutMode);
@@ -149,9 +152,9 @@ public int MenuHandlerShoutSet(Menu menu, MenuAction action, int client, int cho
 			else if(shoutMode == 1)
 			{
 				shoutMode = 2;
-				if(shoutCD == 0)
+				if(shoutCD == 1)
 				{
-					shoutCD = 1;
+					shoutCD = 0;
 					UpdateSettingsInt("cooldown", shoutCD);
 				}
 				UpdateSettingsInt("mode", shoutMode);
@@ -183,7 +186,14 @@ public int MenuHandlerShoutSet(Menu menu, MenuAction action, int client, int cho
 		else if (StrEqual(menuItem, "manage"))		OpenMenuShoutManager(client);
 		else if (StrEqual(menuItem, "help"))		OpenMenuShoutHelp(client);
 	}
-	else if (action == MenuAction_Cancel && choice == -6)   CancelClientMenu(client,true);
+	else if (action == MenuAction_Cancel && choice == -6)	
+	{
+		if (soccermod != INVALID_HANDLE)
+		{	
+			FakeClientCommandEx(client, "sm_soccerset");
+		}
+	}
+	else if (action == MenuAction_End)	menu.Close();
 }
 
 // ******************************************************************************************************************

@@ -4,14 +4,25 @@
 	{
 		"Version"
 		{
-			"Latest"	"1.0.1"
+			"Latest"	"1.2"
+			"Previous"	"1.1"
 		}
 		
-		"Notes"	"Added Updater"
+		"Notes"	"Update"
 	}
 	
 	"Files"
 	{
-		"Plugin"	"Path_SM/plugins/soccer_mod.smx"
+			"Patch"
+			{
+				"Plugin"	"Path_SM/plugins/shout.smx"
+			}
+		"Plugin"	"Path_SM/plugins/shout.smx"
+		"Plugin"	"Path_Mod/sound/shout/godlike.mp3"
+		"Plugin"	"Path_Mod/sound/shout/holyshit.mp3"
+		"Plugin"	"Path_Mod/sound/shout/humiliation.mp3"
+		"Plugin"	"Path_Mod/sound/shout/rampage.mp3"
+		"Plugin"	"Path_Mod/sound/shout/teamkiller.mp3"
+		"Plugin"	"Path_Mod/sound/shout/unstoppable.mp3"
 	}
 }
