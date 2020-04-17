@@ -108,8 +108,6 @@ public void OpenMenuShoutSet(int client)
 
 public int MenuHandlerShoutSet(Menu menu, MenuAction action, int client, int choice)
 {
-	Handle soccermod = FindPluginByFile("soccer_mod.smx");
-	
 	if (action == MenuAction_Select)
 	{
 		char menuItem[64];
@@ -186,14 +184,7 @@ public int MenuHandlerShoutSet(Menu menu, MenuAction action, int client, int cho
 		else if (StrEqual(menuItem, "manage"))		OpenMenuShoutManager(client);
 		else if (StrEqual(menuItem, "help"))		OpenMenuShoutHelp(client);
 	}
-	else if (action == MenuAction_Cancel && choice == -6)	
-	{
-		if (soccermod != INVALID_HANDLE)
-		{	
-			FakeClientCommandEx(client, "sm_soccerset");
-		}
-	}
-	else if (action == MenuAction_End)	menu.Close();
+	else if (action == MenuAction_Cancel && choice == -6)   CancelClientMenu(client,true);
 }
 
 // ******************************************************************************************************************
