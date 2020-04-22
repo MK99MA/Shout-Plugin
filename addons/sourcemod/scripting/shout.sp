@@ -2,7 +2,7 @@
 // ************************************************** DEFINES ***************************************************
 // **************************************************************************************************************
 #define PLUGIN_VERSION "1.3"
-#define UPDATE_URL "https://drv.tw/~raroger1975@gmail.com/gd/Sourcemod/shoutplugin/updatefile.txt"
+#define UPDATE_URL "https://raw.githubusercontent.com/MK99MA/Shout-Plugin/master/addons/sourcemod/updatefile.txt"
 #define CLIENT_SHOUTCD  (1<<1)
 
 // **************************************************************************************************************
