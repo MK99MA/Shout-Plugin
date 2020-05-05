@@ -1,7 +1,7 @@
 // **************************************************************************************************************
 // ************************************************** DEFINES ***************************************************
 // **************************************************************************************************************
-#define PLUGIN_VERSION "1.4"
+#define PLUGIN_VERSION "1.5"
 #define UPDATE_URL "https://raw.githubusercontent.com/MK99MA/Shout-Plugin/master/addons/sourcemod/updatefile.txt"
 #define CLIENT_SHOUTCD  (1<<1)
 
@@ -251,6 +251,16 @@ public void PlaySound(int client, char sound[PLATFORM_MAX_PATH], char soundName[
 					{
 						if(IsClientInGame(i) && IsClientConnected(i) && !IsFakeClient(i)) 
 						{
+							for(int k = 1; k <= modVolume; k++)			EmitSoundToClient(i, sound, _, _, _, _, floatVolume, iPitch, _, pos, _, true, _);
+						}
+					}
+				}
+				else if (shoutMode == 2) 
+				{					
+					for(int i = 1; i <= MaxClients; i++)
+					{
+						if(IsClientInGame(i) && IsClientConnected(i) && !IsFakeClient(i)) 
+						{
 							if(GetClientTeam(i) == GetClientTeam(client))	
 							{
 								for(int k = 1; k <= modVolume; k++)			EmitSoundToClient(i, sound, _, _, _, _, floatVolume, iPitch, _, pos, _, true, _);
@@ -258,7 +268,7 @@ public void PlaySound(int client, char sound[PLATFORM_MAX_PATH], char soundName[
 						}
 					}
 				}
-				else if (shoutMode == 2)
+				else if (shoutMode == 3)
 				{
 					for(int i = 1; i <= MaxClients; i++)
 					{
@@ -278,7 +288,7 @@ public void PlaySound(int client, char sound[PLATFORM_MAX_PATH], char soundName[
 						}
 					}
 				}
-				else if (shoutMode == 3)
+				else if (shoutMode == 4)
 				{
 					for(int i = 1; i <= MaxClients; i++)
 					{

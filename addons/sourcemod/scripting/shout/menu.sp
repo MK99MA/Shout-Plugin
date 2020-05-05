@@ -86,9 +86,10 @@ public void OpenMenuShoutSet(int client)
 	if(shoutCommand == 0)commandstring = "Commands: OFF";
 	else if (shoutCommand == 1) commandstring = "Commands: ON";
 	if(shoutMode == 0)modestring = "Mode: Ambient";
-	else if (shoutMode == 1) modestring = "Mode: Team";
-	else if (shoutMode == 2) modestring = "Mode: Radius";
-	else if (shoutMode == 3) modestring = "Mode: Radius(Team)";
+	else if (shoutMode == 1) modestring = "Mode: Everyone";
+	else if (shoutMode == 2) modestring = "Mode: Team";
+	else if (shoutMode == 3) modestring = "Mode: Radius";
+	else if (shoutMode == 4) modestring = "Mode: Radius(Team)";
 	Format(radiusstring, sizeof(radiusstring), "Radius: %i", shoutRadius);
 	
 	
@@ -139,9 +140,9 @@ public int MenuHandlerShoutSet(Menu menu, MenuAction action, int client, int cho
 			if(shoutMode == 0)
 			{
 				shoutMode = 1;
-				if(shoutCD == 0)
+				if(shoutCD == 1)
 				{
-					shoutCD = 1;
+					shoutCD = 0;
 					UpdateSettingsInt("cooldown", shoutCD);
 				}
 				UpdateSettingsInt("mode", shoutMode);
@@ -171,10 +172,21 @@ public int MenuHandlerShoutSet(Menu menu, MenuAction action, int client, int cho
 			}
 			else if(shoutMode == 3)
 			{
-				shoutMode = 0;
+				shoutMode = 4;
 				if(shoutCD == 1)
 				{
 					shoutCD = 0;
+					UpdateSettingsInt("cooldown", shoutCD);
+				}
+				UpdateSettingsInt("mode", shoutMode);
+				OpenMenuShoutSet(client);
+			}
+			else if(shoutMode == 4)
+			{
+				shoutMode = 0;
+				if(shoutCD == 0)
+				{
+					shoutCD = 1;
 					UpdateSettingsInt("cooldown", shoutCD);
 				}
 				UpdateSettingsInt("mode", shoutMode);
